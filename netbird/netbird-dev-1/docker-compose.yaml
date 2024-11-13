@@ -1,0 +1,26 @@
+---
+services:
+  netbird:
+    image: netbirdio/netbird:latest
+    container_name: netbird-dev-1
+    hostname: netbird-dev-1.srv-dev-1.home.anrn.dev
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    environment:
+      - NB_SETUP_KEY=${SETUP_KEY}
+    volumes:
+      - netbird-client:/etc/netbird
+    networks:
+      - frontend
+      - backend
+    restart: unless-stopped
+volumes:
+  netbird-client:
+    name: netbird-client
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

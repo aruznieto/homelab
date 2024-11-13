@@ -3,8 +3,9 @@
 .obsidian/**
 .DS_Store
 
-**/.envrc
-**/.env
+**/*.envrc
+**/*.env
+**/*.key
 
 **/.terraform
 **/.terraform.lock.hcl

@@ -1,0 +1,23 @@
+---
+networks:
+  frontend:
+    external: true
+services:
+  uptimekuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptimekuma-prod-1
+    ports:
+      - "8004:3001"
+    volumes:
+      - ./data:/app/data
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.teleport.loadbalancer.server.port: "8004"
+      traefik.http.services.teleport.loadbalancer.server.scheme: "http"
+      traefik.http.routers.teleport-http.rule: "Host(`uptimekuma-prod-1.srv-prod-2.home.anrn.dev`)"
+      traefik.http.routers.teleport-https.rule: "Host(`uptimekuma-prod-1.srv-prod-2.home.anrn.dev`)"
+      traefik.http.routers.teleport-https.tls: "true"
+      traefik.http.routers.teleport-https.tls.certresolver: "cloudflare"
+    networks:
+      - frontend
+    restart: unless-stopped

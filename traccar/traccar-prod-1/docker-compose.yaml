@@ -1,0 +1,26 @@
+networks:
+  frontend:
+    external: true
+services:
+  traccar:
+    image: traccar/traccar:latest
+    container_name: traccar-prod-1
+    ports:
+      - "8082:8082"
+      - "5000-5150:5000-5150"
+      - "5000-5150:5000-5150/udp"
+    volumes:
+      - ./logs:/opt/traccar/logs:rw
+      - ./traccar.xml:/opt/traccar/conf/traccar.xml:ro
+      - ./templates:/opt/traccar/templates:rw
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.traccar-prod-1.loadbalancer.server.port: "8082"
+      traefik.http.services.traccar-prod-1.loadbalancer.server.scheme: "http"
+      traefik.http.routers.traccar-prod-1-http.rule: "Host(`traccar-prod-1.srv-prod-2.home.anrn.dev`)"
+      traefik.http.routers.traccar-prod-1-https.rule: "Host(`traccar-prod-1.srv-prod-2.home.anrn.dev`)"
+      traefik.http.routers.traccar-prod-1-https.tls: "true"
+      traefik.http.routers.traccar-prod-1-https.tls.certresolver: "cloudflare"
+    networks:
+      - frontend
+    restart: unless-stopped

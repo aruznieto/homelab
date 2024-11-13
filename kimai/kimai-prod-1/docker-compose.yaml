@@ -1,0 +1,51 @@
+networks:
+  backend:
+    external: true
+  frontend:
+    external: true
+services:
+  sqldb:
+    image: mysql:8.3
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    command: --default-storage-engine innodb
+    restart: unless-stopped
+    healthcheck:
+      test: mysqladmin -p$$MYSQL_ROOT_PASSWORD ping -h localhost
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
+    networks:
+      - backend
+
+  kimai:
+    image: kimai/kimai2:apache
+    volumes:
+      - ./data:/opt/kimai/var/data
+    ports:
+      - 8001:8001
+    environment:
+      - ADMINMAIL=${ADMINMAIL}
+      - ADMINPASS=${ADMINPASS}
+      - "DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@sqldb/${MYSQL_DATABASE}?charset=utf8mb4&serverVersion=8.3.0"
+      - TRUSTED_HOSTS=nginx,localhost,127.0.0.1
+    networks:
+      - frontend
+      - backend
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.kimai-prod-1.loadbalancer.server.port: "8001"
+      traefik.http.services.kimai-prod-1.loadbalancer.server.scheme: "http"
+      #traefik.http.routers.kimai-prod-1-http.entrypoints: "web"
+      traefik.http.routers.kimai-prod-1-http.rule: "Host(`kimai-prod-1.srv-prod-2.home.anrn.dev`)"
+      #traefik.http.routers.kimai-prod-1-https.entrypoints: "websecure"
+      traefik.http.routers.kimai-prod-1-https.rule: "Host(`kimai-prod-1.srv-prod-2.home.anrn.dev`)"
+      traefik.http.routers.kimai-prod-1-https.tls: "true"
+      traefik.http.routers.kimai-prod-1-https.tls.certresolver: "cloudflare"
+    restart: unless-stopped

@@ -1,0 +1,30 @@
+---
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
+
+services:
+  portainer:
+    image: portainer/portainer-ee:latest
+    container_name: portainer-prod-1
+    ports:
+      - 9000:9000
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.portainer-prod-1.loadbalancer.server.port: "9443"
+      traefik.http.services.portainer-prod-1.loadbalancer.server.scheme: "https"
+      #traefik.http.routers.portainer-prod-1-http.entrypoints: "web"
+      traefik.http.routers.portainer-prod-1-http.rule: "Host(`portainer-prod-1.srv-prod-1.home.anrn.dev`)"
+      #traefik.http.routers.portainer-prod-1-https.entrypoints: "websecure"
+      traefik.http.routers.portainer-prod-1-https.rule: "Host(`portainer-prod-1.srv-prod-1.home.anrn.dev`)"
+      traefik.http.routers.portainer-prod-1-https.tls: "true"
+      traefik.http.routers.portainer-prod-1-https.tls.certresolver: "cloudflare"

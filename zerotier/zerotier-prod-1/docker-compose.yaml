@@ -1,0 +1,52 @@
+---
+networks:
+  backend:
+    external: true
+  frontend:
+    external: true
+
+services:
+  zerotier:
+    image: zyclonite/zerotier:latest
+    container_name: zerotier-prod-1-controller
+    restart: unless-stopped
+    volumes:
+      - ./zerotier-one:/var/lib/zerotier-one
+    environment:
+      ZT_OVERRIDE_LOCAL_CONF: true
+      ZT_ALLOW_MANAGEMENT_FROM: 0.0.0.0/0
+    expose:
+      - "9993/tcp"
+    ports:
+      - "9993:9993/udp"
+    networks:
+      - frontend
+      - backend
+
+  zero-ui:
+    image: dec0dos/zero-ui:latest
+    container_name: zerotier-prod-1-frontend
+    restart: unless-stopped
+    depends_on:
+      - zerotier
+    volumes:
+      - ./zerotier-one:/var/lib/zerotier-one
+      - ./data:/app/backend/data
+    environment:
+      ZU_CONTROLLER_ENDPOINT: http://zerotier:9993/
+      ZU_SECURE_HEADERS: false
+      ZU_DEFAULT_USERNAME: ${USERNAME}
+      ZU_DEFAULT_PASSWORD: ${PASSWORD}
+    ports:
+      - "${UI_PORT}:4000"
+    networks:
+      - frontend
+      - backend
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.zerotier-prod-1.loadbalancer.server.port: "${UI_PORT}"
+      traefik.http.services.zerotier-prod-1.loadbalancer.server.scheme: "http"
+      traefik.http.routers.zerotier-prod-1-http.rule: "Host(`${HOST}`)"
+      traefik.http.routers.zerotier-prod-1-https.rule: "Host(`${HOST}`)"
+      traefik.http.routers.zerotier-prod-1-https.tls: "true"
+      traefik.http.routers.zerotier-prod-1-https.tls.certresolver: "cloudflare"
