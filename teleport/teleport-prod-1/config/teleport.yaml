@@ -1,0 +1,29 @@
+version: v3
+teleport:
+  nodename: teleport-prod-1.X.qH6FNk.domain.es
+  data_dir: /var/lib/teleport
+  log:
+    output: stderr
+    severity: INFO
+    format:
+      output: text
+auth_service:
+  enabled: yes
+  listen_addr: 0.0.0.0:3025
+  proxy_listener_mode: multiplex
+  cluster_name: teleport-prod-1.X.qH6FNk.domain.es
+ssh_service:
+  enabled: no
+proxy_service:
+  enabled: yes
+  web_listen_addr: 0.0.0.0:3080
+  public_addr: teleport-prod-1.X.qH6FNk.domain.es
+  https_keypairs: []
+  acme: {}
+
+app_service:
+  enabled: yes
+  apps:
+    - name: proxmox
+      uri: https://X.qH6FNk.domain.es:8006
+      insecure_skip_verify: true

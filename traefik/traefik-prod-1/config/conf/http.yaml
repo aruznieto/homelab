@@ -1,0 +1,14 @@
+http:  
+  routers:
+    proxmox:
+      rule: "Host(`X.qH6FNk.domain.es`)"
+      service: proxmox
+      entryPoints:
+        - web
+      tls:
+        certResolver: cloudflare
+  services:
+    proxmox:
+      loadBalancer:
+        servers:
+          - url: "http://X.X.X.X:8006"

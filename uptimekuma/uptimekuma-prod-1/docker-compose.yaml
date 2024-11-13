@@ -14,8 +14,8 @@ services:
       traefik.enable: "true"
       traefik.http.services.teleport.loadbalancer.server.port: "8004"
       traefik.http.services.teleport.loadbalancer.server.scheme: "http"
-      traefik.http.routers.teleport-http.rule: "Host(`uptimekuma-prod-1.srv-prod-2.home.anrn.dev`)"
-      traefik.http.routers.teleport-https.rule: "Host(`uptimekuma-prod-1.srv-prod-2.home.anrn.dev`)"
+      traefik.http.routers.teleport-http.rule: "Host(`${HOST}`)"
+      traefik.http.routers.teleport-https.rule: "Host(`${HOST}`)"
       traefik.http.routers.teleport-https.tls: "true"
       traefik.http.routers.teleport-https.tls.certresolver: "cloudflare"
     networks:

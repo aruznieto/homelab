@@ -3,7 +3,7 @@ services:
   netbird:
     image: netbirdio/netbird:latest
     container_name: netbird-dev-1
-    hostname: netbird-dev-1.srv-dev-1.home.anrn.dev
+    hostname: ${HOST}
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN

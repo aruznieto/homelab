@@ -37,8 +37,8 @@ services:
       traefik.enable: "true"
       traefik.http.services.overleaf-prod-1.loadbalancer.server.port: "8083"
       traefik.http.services.overleaf-prod-1.loadbalancer.server.scheme: "http"
-      traefik.http.routers.overleaf-prod-1-http.rule: "Host(`overleaf.home.anrn.dev`)"
-      traefik.http.routers.overleaf-prod-1-https.rule: "Host(`overleaf.home.anrn.dev`)"
+      traefik.http.routers.overleaf-prod-1-http.rule: "Host(`${HOST}`)"
+      traefik.http.routers.overleaf-prod-1-https.rule: "Host(`${HOST}`)"
       traefik.http.routers.overleaf-prod-1-https.tls: "true"
       traefik.http.routers.overleaf-prod-1-https.tls.certresolver: "cloudflare"
 
