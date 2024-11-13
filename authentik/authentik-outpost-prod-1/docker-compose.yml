@@ -1,0 +1,15 @@
+---
+networks:
+  backend:
+    external: true
+services:
+  authentik_proxy:
+    image: ghcr.io/goauthentik/proxy:2024.6.2
+    container_name: authentik-outpost-prod-1
+    environment:
+      - AUTHENTIK_HOST=https://authentik-prod-1.X.qH6FNk.domain.es
+      - AUTHENTIK_INSECURE=true
+      - AUTHENTIK_TOKEN=${AUTHENTIK_TOKEN}
+    networks:
+      - backend
+    restart: unless-stopped
